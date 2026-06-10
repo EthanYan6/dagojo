@@ -1,5 +1,81 @@
 const App = (() => {
   let wakeLock = null;
+  let fullscreenBtn = null;
+
+  function isLandscape() {
+    if (screen.orientation) {
+      return screen.orientation.angle === 90 || screen.orientation.angle === 270;
+    }
+    return (window.orientation || 0) === 90 || (window.orientation || 0) === -90;
+  }
+
+  function requestFullscreen() {
+    const el = document.documentElement;
+    if (el.requestFullscreen) {
+      el.requestFullscreen();
+    } else if (el.webkitRequestFullscreen) {
+      el.webkitRequestFullscreen();
+    } else if (el.webkitEnterFullscreen) {
+      el.webkitEnterFullscreen();
+    }
+  }
+
+  function exitFullscreen() {
+    if (document.exitFullscreen) {
+      document.exitFullscreen();
+    } else if (document.webkitExitFullscreen) {
+      document.webkitExitFullscreen();
+    }
+  }
+
+  function setupOrientationHandling() {
+    // Create fullscreen button (hidden by default)
+    fullscreenBtn = document.createElement('button');
+    fullscreenBtn.id = 'fullscreen-btn';
+    fullscreenBtn.textContent = '全屏';
+    fullscreenBtn.style.cssText = `
+      position: fixed; bottom: 20px; right: 20px; z-index: 50;
+      background: rgba(0,255,136,0.15); border: 1px solid #00ff88;
+      color: #00ff88; padding: 8px 16px; font-family: inherit; font-size: 16px;
+      cursor: pointer; display: none; border-radius: 4px;
+    `;
+    fullscreenBtn.addEventListener('click', () => {
+      if (document.fullscreenElement || document.webkitFullscreenElement) {
+        exitFullscreen();
+        fullscreenBtn.textContent = '全屏';
+      } else {
+        requestFullscreen();
+        fullscreenBtn.textContent = '退出';
+      }
+    });
+    document.body.appendChild(fullscreenBtn);
+
+    function onOrientationChange() {
+      if (isLandscape()) {
+        fullscreenBtn.style.display = 'block';
+        // Auto fullscreen if not already
+        if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+          requestFullscreen();
+          fullscreenBtn.textContent = '退出';
+        }
+      } else {
+        fullscreenBtn.style.display = 'none';
+        // Exit fullscreen when rotating back to portrait
+        if (document.fullscreenElement || document.webkitFullscreenElement) {
+          exitFullscreen();
+        }
+      }
+    }
+
+    window.addEventListener('orientationchange', () => {
+      setTimeout(onOrientationChange, 100);
+    });
+    // Also check on resize
+    window.addEventListener('resize', onOrientationChange);
+
+    // Initial check
+    onOrientationChange();
+  }
 
   async function init() {
     const overlay = document.getElementById('permission-overlay');
@@ -33,6 +109,9 @@ const App = (() => {
     }
     setInterval(updateTime, 1000);
     updateTime();
+
+    // Setup orientation handling and fullscreen button
+    setupOrientationHandling();
 
     // Permission button handler
     // On iOS, DeviceOrientationEvent.requestPermission() MUST be called
