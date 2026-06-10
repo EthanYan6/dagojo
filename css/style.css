@@ -57,8 +57,10 @@ html, body {
 
 /* Compass bar */
 #compass-bar {
-  width: 100%;
+  width: 60%;
+  max-width: 500px;
   height: 48px;
+  margin: 0 auto;
   border-bottom: 1px solid rgba(0, 255, 136, 0.3);
   overflow: hidden;
   display: flex;
