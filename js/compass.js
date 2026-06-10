@@ -30,6 +30,11 @@ const Compass = (() => {
     } else if (event.alpha !== null) {
       currentHeading = (360 - event.alpha) % 360;
     }
+
+    // Adjust for screen orientation (landscape mode)
+    const angle = (screen.orientation && screen.orientation.angle) || window.orientation || 0;
+    currentHeading = (currentHeading + angle) % 360;
+
     render();
   }
 

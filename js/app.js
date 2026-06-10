@@ -71,7 +71,7 @@ const App = (() => {
   function startLocationUpdates(locationEl, sunriseEl, sunsetEl) {
     let lastCoords = null;
 
-    setInterval(async () => {
+    function update() {
       const coords = Location.getCoords();
       if (!coords) return;
 
@@ -79,23 +79,36 @@ const App = (() => {
       if (!lastCoords ||
           Math.abs(coords.lat - lastCoords.lat) > 0.001 ||
           Math.abs(coords.lon - lastCoords.lon) > 0.001) {
-        const addr = await Geocoding.reverseGeocode(coords.lat, coords.lon);
-        locationEl.innerHTML = `${Icons.location()} ${addr}`;
+        Geocoding.reverseGeocode(coords.lat, coords.lon).then(addr => {
+          locationEl.innerHTML = `${Icons.location()} ${addr}`;
+        });
         lastCoords = coords;
       }
 
       // Sunrise/sunset
-      try {
-        const times = SunCalc.getTimes(new Date(), coords.lat, coords.lon);
-        const fmt = d => {
-          const h = String(d.getHours()).padStart(2, '0');
-          const m = String(d.getMinutes()).padStart(2, '0');
-          return `${h}:${m}`;
-        };
-        sunriseEl.innerHTML = `${Icons.sunrise()} ${fmt(times.sunrise)}`;
-        sunsetEl.innerHTML = `${Icons.sunset()} ${fmt(times.sunset)}`;
-      } catch (e) {}
-    }, 5000);
+      if (typeof SunCalc !== 'undefined') {
+        try {
+          const times = SunCalc.getTimes(new Date(), coords.lat, coords.lon);
+          const fmt = d => {
+            const h = String(d.getHours()).padStart(2, '0');
+            const m = String(d.getMinutes()).padStart(2, '0');
+            return `${h}:${m}`;
+          };
+          sunriseEl.innerHTML = `${Icons.sunrise()} ${fmt(times.sunrise)}`;
+          sunsetEl.innerHTML = `${Icons.sunset()} ${fmt(times.sunset)}`;
+        } catch (e) {
+          sunriseEl.textContent = '计算失败';
+          sunsetEl.textContent = '计算失败';
+        }
+      } else {
+        sunriseEl.textContent = 'SunCalc未加载';
+        sunsetEl.textContent = 'SunCalc未加载';
+      }
+    }
+
+    // Update immediately and then every 5 seconds
+    update();
+    setInterval(update, 5000);
   }
 
   async function requestWakeLock() {
