@@ -63,15 +63,15 @@
   <script src="js/location.js"></script>
   <script src="js/geocoding.js"></script>
   <script src="js/app.js"></script>
-  <!-- 不蒜子统计 UV - 新版 -->
-  <span id="busuanzi_container_site_uv" style="display:none">
-    <span id="busuanzi_site_uv"></span>
+  <!-- 不蒜子统计 - 使用 page_uv 避免与其他项目数据混淆 -->
+  <span id="busuanzi_container_page_uv" style="display:none">
+    <span id="busuanzi_page_uv"></span>
   </span>
   <script defer src="https://cdn.busuanzi.cc/busuanzi/3.6.9/busuanzi.min.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       var displayEl = document.getElementById('visitor-count');
-      var busuanziEl = document.getElementById('busuanzi_site_uv');
+      var busuanziEl = document.getElementById('busuanzi_page_uv');
       var retryCount = 0;
       var maxRetries = 20;
       var initialCheck = setInterval(function() {
