@@ -61,14 +61,16 @@ html, body {
   height: 48px;
   display: flex;
   align-items: center;
+  justify-content: center;
   border-bottom: 1px solid rgba(0, 255, 136, 0.3);
   flex-shrink: 0;
   padding: 0 12px;
+  position: relative;
 }
 
 /* Compass bar */
 #compass-bar {
-  flex: 1;
+  width: 50%;
   height: 100%;
   overflow: hidden;
   display: flex;
@@ -229,6 +231,6 @@ html, body {
   color: #00ff88;
   font-family: 'Courier New', Courier, monospace;
   white-space: nowrap;
-  flex-shrink: 0;
-  margin-left: 8px;
+  position: absolute;
+  right: 12px;
 }
