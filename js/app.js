@@ -3,8 +3,9 @@ const App = (() => {
   const DRIVE_TIME_KEY = 'hud_drive_start';
 
   function calcO2(altitude) {
-    const o2 = 20.9 * Math.exp(-altitude / 7990);
-    return o2.toFixed(1);
+    // Relative to sea level: 100% at 0m, decreases with altitude
+    var relative = Math.exp(-altitude / 7990) * 100;
+    return relative.toFixed(0);
   }
 
   function formatDuration(ms) {
