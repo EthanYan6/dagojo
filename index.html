@@ -21,7 +21,7 @@
     <div id="top-bar">
       <div id="compass-bar"></div>
       <div id="visitor-counter">
-        <span id="busuanzi_container_site_uv">共<span id="busuanzi_value_site_uv">--</span>人</span>
+        共<span id="visitor-count">--</span>人使用
       </div>
     </div>
 
@@ -63,6 +63,32 @@
   <script src="js/location.js"></script>
   <script src="js/geocoding.js"></script>
   <script src="js/app.js"></script>
-  <script async src="https://cdn.jsdelivr.net/npm/busuanzi@2.3/bsz.pure.mini.js"></script>
+  <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var displayEl = document.getElementById('visitor-count');
+      var busuanziEl = document.getElementById('busuanzi_value_site_uv');
+      var retryCount = 0;
+      var maxRetries = 20;
+      var initialCheck = setInterval(function() {
+        if (busuanziEl && busuanziEl.textContent && busuanziEl.textContent !== '--') {
+          displayEl.textContent = busuanziEl.textContent;
+          clearInterval(initialCheck);
+          setInterval(function() {
+            if (busuanziEl && busuanziEl.textContent && busuanziEl.textContent !== '--') {
+              displayEl.textContent = busuanziEl.textContent;
+            }
+          }, 5000);
+        }
+        retryCount++;
+        if (retryCount >= maxRetries) {
+          clearInterval(initialCheck);
+        }
+      }, 500);
+    });
+  </script>
+  <span id="busuanzi_container_site_uv" style="display:none">
+    <span id="busuanzi_value_site_uv"></span>
+  </span>
 </body>
 </html>
