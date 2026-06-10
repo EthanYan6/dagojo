@@ -16,8 +16,7 @@ const App = (() => {
     // Elements
     const altitudeEl = document.getElementById('altitude');
     const locationEl = document.getElementById('location-text');
-    const sunriseEl = document.getElementById('sunrise-text');
-    const sunsetEl = document.getElementById('sunset-text');
+    const sunLineEl = document.getElementById('sun-line');
     const distanceEl = document.getElementById('distance');
     const clockEl = document.getElementById('clock');
     const dateEl = document.getElementById('date');
@@ -61,7 +60,7 @@ const App = (() => {
         overlay.classList.add('hidden');
 
         // Location updates: geocoding + sunrise/sunset
-        startLocationUpdates(locationEl, sunriseEl, sunsetEl);
+        startLocationUpdates(locationEl, sunLineEl);
 
         // Wake lock
         requestWakeLock();
@@ -84,7 +83,7 @@ const App = (() => {
     });
   }
 
-  function startLocationUpdates(locationEl, sunriseEl, sunsetEl) {
+  function startLocationUpdates(locationEl, sunLineEl) {
     let lastCoords = null;
 
     function update() {
@@ -101,7 +100,7 @@ const App = (() => {
         lastCoords = coords;
       }
 
-      // Sunrise/sunset
+      // Sunrise/sunset on one line
       if (typeof SunCalc !== 'undefined') {
         try {
           const times = SunCalc.getTimes(new Date(), coords.lat, coords.lon);
@@ -110,15 +109,12 @@ const App = (() => {
             const m = String(d.getMinutes()).padStart(2, '0');
             return `${h}:${m}`;
           };
-          sunriseEl.innerHTML = `${Icons.sunrise()} ${fmt(times.sunrise)}`;
-          sunsetEl.innerHTML = `${Icons.sunset()} ${fmt(times.sunset)}`;
+          sunLineEl.innerHTML = `${Icons.sunrise()} ${fmt(times.sunrise)}  ${Icons.sunset()} ${fmt(times.sunset)}`;
         } catch (e) {
-          sunriseEl.textContent = '计算失败';
-          sunsetEl.textContent = '计算失败';
+          sunLineEl.textContent = '日出日落计算失败';
         }
       } else {
-        sunriseEl.textContent = 'SunCalc未加载';
-        sunsetEl.textContent = 'SunCalc未加载';
+        sunLineEl.textContent = 'SunCalc未加载';
       }
     }
 

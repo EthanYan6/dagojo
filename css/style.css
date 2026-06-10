@@ -57,8 +57,7 @@ html, body {
 
 /* Compass bar */
 #compass-bar {
-  width: 60%;
-  max-width: 500px;
+  width: 50%;
   height: 48px;
   margin: 0 auto;
   border-bottom: 1px solid rgba(0, 255, 136, 0.3);
@@ -67,31 +66,33 @@ html, body {
   align-items: center;
   justify-content: center;
   position: relative;
-  font-size: 14px;
+  font-size: 16px;
   letter-spacing: 4px;
   flex-shrink: 0;
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 20%, black 80%, transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0%, black 20%, black 80%, transparent 100%);
 }
 
 #compass-bar .compass-item {
   white-space: nowrap;
   transition: opacity 0.1s;
-  padding: 0 8px;
+  padding: 0 10px;
 }
 
 #compass-bar .compass-center {
   color: #00ff88;
   font-weight: bold;
-  font-size: 18px;
+  font-size: 22px;
   border-bottom: 2px solid #ff3333;
-  padding: 0 6px;
+  padding: 0 8px;
 }
 
 /* Content area */
 #content {
   flex: 1;
   display: flex;
-  padding: 16px 20px;
-  gap: 20px;
+  padding: 20px 24px;
+  gap: 24px;
 }
 
 #left-col {
@@ -123,7 +124,7 @@ html, body {
 }
 
 .label {
-  font-size: 20px;
+  font-size: 24px;
   opacity: 0.6;
   letter-spacing: 2px;
 }
@@ -131,19 +132,19 @@ html, body {
 .big-number {
   font-family: 'Arial Black', 'Helvetica Neue', Arial, sans-serif;
   font-weight: 900;
-  font-size: 96px;
+  font-size: 120px;
   line-height: 1;
 }
 
 .big-number .unit {
   font-family: 'Courier New', Courier, monospace;
   font-weight: normal;
-  font-size: 28px;
+  font-size: 32px;
   opacity: 0.7;
 }
 
 .secondary {
-  font-size: 24px;
+  font-size: 28px;
   opacity: 0.8;
   display: flex;
   align-items: center;
@@ -151,26 +152,22 @@ html, body {
 }
 
 .tertiary {
-  font-size: 22px;
+  font-size: 26px;
   opacity: 0.7;
   display: flex;
   align-items: center;
-  gap: 6px;
-}
-
-.tertiary + .tertiary {
-  margin-top: 4px;
+  gap: 8px;
 }
 
 .clock {
   font-family: 'Courier New', Courier, monospace;
-  font-size: 32px;
+  font-size: 40px;
   opacity: 0.8;
 }
 
 .date {
   font-family: 'Courier New', Courier, monospace;
-  font-size: 18px;
+  font-size: 24px;
   opacity: 0.6;
 }
 
