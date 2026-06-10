@@ -173,6 +173,7 @@ html, body {
 
 .o2-icon {
   font-size: 18px;
+  font-weight: bold;
   opacity: 0.8;
   margin-left: 8px;
   vertical-align: middle;
@@ -188,6 +189,7 @@ html, body {
 .datetime {
   font-family: 'Courier New', Courier, monospace;
   font-size: 18px;
+  font-weight: bold;
   opacity: 0.5;
   white-space: nowrap;
 }
