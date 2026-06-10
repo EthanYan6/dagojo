@@ -25,45 +25,50 @@ const App = (() => {
     clockEl.textContent = new Date().toTimeString().slice(0, 8);
 
     // Permission button handler
-    permBtn.addEventListener('click', async () => {
+    // On iOS, DeviceOrientationEvent.requestPermission() MUST be called
+    // synchronously from a user gesture, not after an await.
+    permBtn.addEventListener('click', function() {
       permText.textContent = '正在请求权限...';
 
-      // Request location
-      const locState = await Location.init({
-        onAltitude: alt => {
-          altitudeEl.innerHTML = `${alt}<span class="unit">m</span>`;
-        },
-        onDistance: km => {
-          distanceEl.innerHTML = `${km.toFixed(1)}<span class="unit">km</span>`;
-        }
-      });
-
-      // Request compass
-      const compassState = await Compass.init(compassBar);
-
-      if (locState === 'denied' && compassState === 'denied') {
-        permText.textContent = '权限被拒绝，请在浏览器设置中开启';
-        return;
-      }
-
-      overlay.classList.add('hidden');
-
-      // Location updates: geocoding + sunrise/sunset
-      startLocationUpdates(locationEl, sunriseEl, sunsetEl);
-
-      // Wake lock
-      requestWakeLock();
-
-      // Distance reset: double click
-      let lastClick = 0;
-      distanceEl.addEventListener('click', () => {
-        const now = Date.now();
-        if (now - lastClick < 400) {
-          if (confirm('重置行驶距离？')) {
-            Location.resetDistance();
+      // Request compass FIRST (must be synchronous from click on iOS)
+      Compass.init(compassBar).then(compassState => {
+        // Then request location
+        return Location.init({
+          onAltitude: alt => {
+            altitudeEl.innerHTML = `${alt}<span class="unit">m</span>`;
+          },
+          onDistance: km => {
+            distanceEl.innerHTML = `${km.toFixed(1)}<span class="unit">km</span>`;
           }
+        }).then(locState => ({ compassState, locState }));
+      }).then(({ compassState, locState }) => {
+        if (locState === 'denied' && compassState === 'denied') {
+          permText.textContent = '权限被拒绝，请在浏览器设置中开启';
+          return;
         }
-        lastClick = now;
+
+        overlay.classList.add('hidden');
+
+        // Location updates: geocoding + sunrise/sunset
+        startLocationUpdates(locationEl, sunriseEl, sunsetEl);
+
+        // Wake lock
+        requestWakeLock();
+
+        // Distance reset: double click
+        let lastClick = 0;
+        distanceEl.addEventListener('click', () => {
+          const now = Date.now();
+          if (now - lastClick < 400) {
+            if (confirm('重置行驶距离？')) {
+              Location.resetDistance();
+            }
+          }
+          lastClick = now;
+        });
+      }).catch(err => {
+        console.error('Permission error:', err);
+        permText.textContent = '权限请求出错: ' + err.message;
       });
     });
   }
