@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <title>Driving HUD</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Permission overlay -->
+  <div id="permission-overlay">
+    <div id="permission-text">请允许定位和陀螺仪权限</div>
+    <button id="permission-btn">授权</button>
+  </div>
+
+  <!-- Main HUD -->
+  <div id="hud">
+    <!-- Compass bar -->
+    <div id="compass-bar"></div>
+
+    <!-- Content area -->
+    <div id="content">
+      <!-- Left column -->
+      <div id="left-col">
+        <div class="info-block">
+          <span class="label">海拔</span>
+          <div id="altitude" class="big-number">--<span class="unit">m</span></div>
+        </div>
+        <div class="info-block">
+          <span id="location-text" class="secondary">正在获取位置...</span>
+        </div>
+        <div class="info-block">
+          <span id="sunrise-text" class="tertiary">--:--</span>
+          <span id="sunset-text" class="tertiary">--:--</span>
+        </div>
+      </div>
+
+      <!-- Right column -->
+      <div id="right-col">
+        <div class="info-block">
+          <span class="label">已行驶</span>
+          <div id="distance" class="big-number">0<span class="unit">km</span></div>
+        </div>
+        <div class="info-block">
+          <div id="clock" class="clock">--:--:--</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="lib/suncalc.js"></script>
+  <script src="js/icons.js"></script>
+  <script src="js/compass.js"></script>
+  <script src="js/location.js"></script>
+  <script src="js/geocoding.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
