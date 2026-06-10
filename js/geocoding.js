@@ -1,6 +1,6 @@
 const Geocoding = (() => {
-  // Using Nominatim (OpenStreetMap) - free, no API key needed
-  const API_URL = 'https://nominatim.openstreetmap.org/reverse';
+  // BigDataCloud - free for client-side, no API key needed, good CORS support
+  const API_URL = 'https://api.bigdatacloud.net/data/reverse-geocode-client';
 
   let lastQueryLat = null;
   let lastQueryLon = null;
@@ -20,46 +20,51 @@ const Geocoding = (() => {
     try {
       if (!navigator.onLine) {
         currentAddress = `${lat.toFixed(4)}, ${lon.toFixed(4)}`;
+        pending = false;
         return currentAddress;
       }
 
-      const url = `${API_URL}?lat=${lat.toFixed(6)}&lon=${lon.toFixed(6)}&format=json&accept-language=zh-CN`;
-      const resp = await fetch(url, {
-        headers: {
-          'User-Agent': 'DrivingHUD/1.0'
-        }
-      });
+      const url = `${API_URL}?latitude=${lat}&longitude=${lon}&localityLanguage=zh`;
+      const resp = await fetch(url);
       const data = await resp.json();
 
-      if (data && data.display_name) {
-        // Nominatim returns full address, shorten it
-        currentAddress = shortenAddress(data.display_name);
-        lastQueryLat = lat;
-        lastQueryLon = lon;
+      if (data) {
+        // Build address from components
+        const parts = [];
+        if (data.principalSubdivision) parts.push(data.principalSubdivision);
+        if (data.city) parts.push(data.city);
+        if (data.locality) parts.push(data.locality);
+        if (data.localityInfo && data.localityInfo.administrative) {
+          // Try to get more detailed info
+          const admin = data.localityInfo.administrative;
+          for (let i = admin.length - 1; i >= 0; i--) {
+            if (admin[i].name && !parts.includes(admin[i].name)) {
+              parts.push(admin[i].name);
+            }
+          }
+        }
+
+        if (parts.length > 0) {
+          currentAddress = parts.slice(0, 4).join('');
+          lastQueryLat = lat;
+          lastQueryLon = lon;
+        } else if (data.locality) {
+          currentAddress = data.locality;
+          lastQueryLat = lat;
+          lastQueryLon = lon;
+        } else {
+          currentAddress = `${lat.toFixed(4)}, ${lon.toFixed(4)}`;
+        }
       } else {
         currentAddress = `${lat.toFixed(4)}, ${lon.toFixed(4)}`;
       }
     } catch (e) {
+      console.error('Geocoding error:', e);
       currentAddress = `${lat.toFixed(4)}, ${lon.toFixed(4)}`;
     }
 
     pending = false;
     return currentAddress;
-  }
-
-  function shortenAddress(full) {
-    // Nominatim returns: "具体地址, 区, 市, 省, 国家"
-    // We want: "省市区" or shorter
-    const parts = full.split(',').map(s => s.trim());
-    if (parts.length >= 3) {
-      // Take last 3-4 parts (excluding country)
-      const relevant = parts.filter(p => !p.match(/中国|China|中华人民共和国/));
-      if (relevant.length >= 3) {
-        return relevant.slice(-3).join('');
-      }
-      return relevant.join('');
-    }
-    return full;
   }
 
   function haversineKm(lat1, lon1, lat2, lon2) {
