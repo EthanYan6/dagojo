@@ -1,6 +1,6 @@
 const Compass = (() => {
   const DIRECTIONS = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
-  const TICKS = 36; // number of items visible in the bar
+  const TICKS = 24; // number of items visible in the bar
 
   let currentHeading = 0;
   let barEl = null;
