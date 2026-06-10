@@ -32,9 +32,10 @@ const Compass = (() => {
     }
 
     // Adjust for screen orientation (landscape mode)
-    // webkitCompassHeading is relative to device top, we need to adjust for screen rotation
+    // Device top points away from user when mounted on dashboard
+    // Need to rotate 180° to match screen perspective
     const angle = (screen.orientation && screen.orientation.angle) || window.orientation || 0;
-    currentHeading = ((currentHeading - angle) % 360 + 360) % 360;
+    currentHeading = ((currentHeading - angle + 180) % 360 + 360) % 360;
 
     render();
   }
