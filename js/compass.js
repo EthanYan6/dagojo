@@ -24,18 +24,22 @@ const Compass = (() => {
   }
 
   function onOrientation(event) {
-    // alpha: 0-360, compass heading on most devices
     if (event.webkitCompassHeading !== undefined) {
       currentHeading = event.webkitCompassHeading;
     } else if (event.alpha !== null) {
       currentHeading = (360 - event.alpha) % 360;
     }
 
-    // Adjust for screen orientation (landscape mode)
-    // Device top points away from user when mounted on dashboard
-    // Need to rotate 180° to match screen perspective
-    const angle = (screen.orientation && screen.orientation.angle) || window.orientation || 0;
-    currentHeading = ((currentHeading - angle + 180) % 360 + 360) % 360;
+    var angle = (screen.orientation && screen.orientation.angle) || window.orientation || 0;
+    var isLandscape = (angle === 90 || angle === -90 || angle === 270);
+
+    if (isLandscape) {
+      // Landscape: device top points away from user on dashboard, add 180°
+      currentHeading = ((currentHeading - angle + 180) % 360 + 360) % 360;
+    } else {
+      // Portrait: no extra adjustment needed
+      currentHeading = ((currentHeading - angle) % 360 + 360) % 360;
+    }
 
     render();
   }
