@@ -6,6 +6,13 @@ const App = (() => {
     const permBtn = document.getElementById('permission-btn');
     const permText = document.getElementById('permission-text');
 
+    // Check HTTPS (required for iOS)
+    if (location.protocol !== 'https:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
+      permText.textContent = '⚠ iOS需要HTTPS访问，请使用https://开头的地址';
+      permBtn.style.display = 'none';
+      return;
+    }
+
     // Elements
     const altitudeEl = document.getElementById('altitude');
     const locationEl = document.getElementById('location-text');
@@ -133,4 +140,11 @@ const App = (() => {
 })();
 
 // Start
-document.addEventListener('DOMContentLoaded', () => App.init());
+document.addEventListener('DOMContentLoaded', () => {
+  try {
+    App.init();
+  } catch (err) {
+    console.error('App init error:', err);
+    document.getElementById('permission-text').textContent = '初始化出错: ' + err.message;
+  }
+});
