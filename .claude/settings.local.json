@@ -5,7 +5,9 @@
       "Bash(bash *)",
       "Bash(curl -sL https://raw.githubusercontent.com/mourner/suncalc/master/suncalc.js -o lib/suncalc.js)",
       "Bash(powershell.exe *)",
-      "Bash(curl *)"
+      "Bash(curl *)",
+      "WebFetch(domain:www.busuanzi.cc)",
+      "WebSearch"
     ]
   }
 }
