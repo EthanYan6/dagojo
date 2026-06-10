@@ -1,7 +1,6 @@
 const Geocoding = (() => {
-  // Replace with your Amap Web Services API key
-  const AMAP_KEY = 'YOUR_AMAP_KEY';
-  const API_URL = 'https://restapi.amap.com/v3/geocode/regeo';
+  // Using Nominatim (OpenStreetMap) - free, no API key needed
+  const API_URL = 'https://nominatim.openstreetmap.org/reverse';
 
   let lastQueryLat = null;
   let lastQueryLon = null;
@@ -24,12 +23,17 @@ const Geocoding = (() => {
         return currentAddress;
       }
 
-      const url = `${API_URL}?key=${AMAP_KEY}&location=${lon.toFixed(6)},${lat.toFixed(6)}&output=json`;
-      const resp = await fetch(url);
+      const url = `${API_URL}?lat=${lat.toFixed(6)}&lon=${lon.toFixed(6)}&format=json&accept-language=zh-CN`;
+      const resp = await fetch(url, {
+        headers: {
+          'User-Agent': 'DrivingHUD/1.0'
+        }
+      });
       const data = await resp.json();
 
-      if (data.status === '1' && data.regeocode) {
-        currentAddress = data.regeocode.formatted_address || `${lat.toFixed(4)}, ${lon.toFixed(4)}`;
+      if (data && data.display_name) {
+        // Nominatim returns full address, shorten it
+        currentAddress = shortenAddress(data.display_name);
         lastQueryLat = lat;
         lastQueryLon = lon;
       } else {
@@ -41,6 +45,21 @@ const Geocoding = (() => {
 
     pending = false;
     return currentAddress;
+  }
+
+  function shortenAddress(full) {
+    // Nominatim returns: "具体地址, 区, 市, 省, 国家"
+    // We want: "省市区" or shorter
+    const parts = full.split(',').map(s => s.trim());
+    if (parts.length >= 3) {
+      // Take last 3-4 parts (excluding country)
+      const relevant = parts.filter(p => !p.match(/中国|China|中华人民共和国/));
+      if (relevant.length >= 3) {
+        return relevant.slice(-3).join('');
+      }
+      return relevant.join('');
+    }
+    return full;
   }
 
   function haversineKm(lat1, lon1, lat2, lon2) {
