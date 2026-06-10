@@ -63,7 +63,11 @@
   <script src="js/location.js"></script>
   <script src="js/geocoding.js"></script>
   <script src="js/app.js"></script>
-  <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  <!-- 不蒜子统计 UV -->
+  <span id="busuanzi_container_site_uv" style="display:none">
+    <span id="busuanzi_value_site_uv"></span>
+  </span>
+  <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" data-site-id="https://ethanyan6.github.io/dagojo/"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       var displayEl = document.getElementById('visitor-count');
@@ -87,8 +91,5 @@
       }, 500);
     });
   </script>
-  <span id="busuanzi_container_site_uv" style="display:none">
-    <span id="busuanzi_value_site_uv"></span>
-  </span>
 </body>
 </html>
