@@ -20,16 +20,20 @@ const App = (() => {
     const sunsetEl = document.getElementById('sunset-text');
     const distanceEl = document.getElementById('distance');
     const clockEl = document.getElementById('clock');
+    const dateEl = document.getElementById('date');
     const compassBar = document.getElementById('compass-bar');
 
-    // Clock
-    setInterval(() => {
+    // Clock and date
+    function updateTime() {
       const now = new Date();
       clockEl.textContent = now.toTimeString().slice(0, 8);
-    }, 1000);
-
-    // Initial clock
-    clockEl.textContent = new Date().toTimeString().slice(0, 8);
+      const y = now.getFullYear();
+      const m = String(now.getMonth() + 1).padStart(2, '0');
+      const d = String(now.getDate()).padStart(2, '0');
+      dateEl.textContent = `${y}/${m}/${d}`;
+    }
+    setInterval(updateTime, 1000);
+    updateTime();
 
     // Permission button handler
     // On iOS, DeviceOrientationEvent.requestPermission() MUST be called
